@@ -12,7 +12,10 @@ namespace BSXScript_Tool
 {
     class BSXScript
     {
-        static readonly byte[] Signature = Encoding.ASCII.GetBytes("BSXScript 3.0\x00\x00\x00");
+        static readonly byte[] Signature_3_0 = Encoding.ASCII.GetBytes("BSXScript 3.0\x00\x00\x00");
+        static readonly byte[] Signature_3_1 = Encoding.ASCII.GetBytes("BSXScript 3.1\x00\x00\x00");
+        static readonly byte[] Signature_3_2 = Encoding.ASCII.GetBytes("BSXScript 3.2\x00\x00\x00");
+        static readonly byte[] Signature_3_3 = Encoding.ASCII.GetBytes("BSXScript 3.3\x00\x00\x00");
 
         byte[] _scriptBuffer;
 
@@ -34,8 +37,12 @@ namespace BSXScript_Tool
 
             using var reader = new BinaryReader(File.OpenRead(filePath));
 
-            if (!reader.ReadBytes(Signature.Length)
-                .SequenceEqual(Signature))
+            var header = reader.ReadBytes(16);
+
+            if (!header.SequenceEqual(Signature_3_0) &&
+                !header.SequenceEqual(Signature_3_1) &&
+                !header.SequenceEqual(Signature_3_2) &&
+                !header.SequenceEqual(Signature_3_3))
             {
                 throw new Exception("Not a valid BSXScript file.");
             }
